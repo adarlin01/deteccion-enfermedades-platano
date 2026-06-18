@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLeaf AI - Prototipo Oficial</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f4f1; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        /* CONTENEDOR ESTILO CELULAR */
+        .phone-container {
+            width: 360px;
+            height: 740px;
+            background-color: #E2F0DF;
+            border-radius: 40px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* PANTALLAS */
+        .screen { display: none; flex-direction: column; height: 100%; justify-content: space-between; position: relative; }
+        .active { display: flex; }
+
+        /* DECORACIONES: CÍRCULOS AMARILLOS Y VERDES (FIGMA STYLE) */
+        .circle-decor { position: absolute; border-radius: 50%; z-index: 1; }
+        .c-yellow-top { width: 180px; height: 180px; background-color: #D4E127; top: -40px; right: -40px; }
+        .c-green-topleft { width: 100px; height: 100px; background-color: #0A5C1D; top: -20px; left: -30px; }
+        .c-yellow-bottomleft { width: 50px; height: 50px; background-color: #D4E127; bottom: 180px; left: 15px; }
+        .c-green-bottomright { width: 110px; height: 110px; background-color: #0A5C1D; bottom: -40px; right: -20px; }
+        .c-green-small { width: 30px; height: 30px; background-color: #71A832; bottom: 210px; right: 25px; }
+
+        /* PANTALLA 1: INICIO / BIENVENIDA */
+        .welcome-content { padding: 40px 24px; display: flex; flex-direction: column; height: 100%; justify-content: space-between; z-index: 2; position: relative; }
+        .logo-area { text-align: center; margin-top: 30px; }
+        .logo-img { width: 140px; height: 140px; object-fit: contain; }
+        .main-title { color: #0A5C1D; font-size: 32px; font-weight: 800; margin-top: 5px; }
+        .main-title span { color: #71A832; }
+        .main-subtitle { color: #4A5D4E; font-size: 13.5px; text-align: center; margin-top: 5px; font-weight: 500; }
+
+        /* RECUADRO DE INFORMACIÓN DEBAJO DEL SUBTÍTULO */
+        .info-row-container { background: white; border-radius: 20px; padding: 15px 10px; display: flex; justify-content: space-around; margin: 15px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .info-card-item { display: flex; flex-direction: column; align-items: center; text-align: center; width: 45%; }
+        .info-card-item .badge-icon { width: 32px; height: 32px; background: #E2F0DF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0A5C1D; font-weight: bold; margin-bottom: 5px; }
+        .info-card-item strong { font-size: 11.5px; color: #0A5C1D; }
+        .info-card-item p { font-size: 10px; color: #666; margin-top: 2px; line-height: 1.2; }
+
+        /* FORMULARIOS (LOGIN) */
+        .login-panel { background-color: #0A5C1D; border-radius: 35px; padding: 30px 20px; margin: auto 20px 20px 20px; z-index: 2; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .login-panel h2 { color: #D4E127; text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 20px; letter-spacing: 0.5px; }
+        .form-label { color: #E2F0DF; font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 5px; }
+        .form-input { width: 100%; padding: 12px; border: none; border-radius: 12px; background: white; margin-bottom: 15px; font-size: 14px; outline: none; }
+        
+        .remember-container { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; color: white; font-size: 12.5px; cursor: pointer; }
+        .remember-container input { accent-color: #D4E127; width: 15px; height: 15px; }
+
+        /* BOTONES */
+        .btn-green { background-color: #0A5C1D; color: white; border: none; padding: 14px; border-radius: 25px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 10px; }
+        .btn-login-submit { background-color: #D4E127; color: #0A5C1D; font-size: 16px; margin-bottom: 0; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+
+        /* PANTALLA NUEVA: BIENVENIDA TRANSITORIA (POST-LOGIN) */
+        .splash-screen { display: none; flex-direction: column; justify-content: center; align-items: center; height: 100%; background-color: #fff; text-align: center; padding: 20px; }
+
+        /* PANTALLA MENÚ PRINCIPAL */
+        .main-app-container { background-color: #f7f9f6; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .top-banner { width: 100%; height: 280px; position: relative; background-size: cover; background-position: center; border-radius: 0 0 45px 45px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; color: white; }
+        .top-banner::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,40,10,0.2) 0%, rgba(0,30,5,0.7) 100%); border-radius: 0 0 45px 45px; z-index: 1; }
+        .banner-header { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: bold; }
+        .banner-body { position: relative; z-index: 2; margin-bottom: 25px; }
+        .banner-title { font-size: 21px; font-weight: 700; margin-bottom: 5px; }
+        .banner-text { font-size: 12px; opacity: 0.95; line-height: 1.3; }
+        
+        /* BOTÓN CÁMARA CIRCULAR ENCIMA */
+        .btn-camera-trigger { width: 115px; height: 115px; background: white; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #0A5C1D; font-size: 11px; font-weight: bold; text-align: center; margin: -58px auto 0 auto; position: relative; z-index: 3; box-shadow: 0 6px 15px rgba(0,0,0,0.12); cursor: pointer; border: none; }
+        .btn-camera-trigger img { width: 35px; height: 35px; object-fit: contain; margin-bottom: 4px; }
+
+        /* ¿CÓMO FUNCIONA? E HOJA AGRANDADA */
+        .center-content { padding: 15px 20px; flex-grow: 1; display: flex; align-items: center; justify-content: center; }
+        .info-card { background: white; padding: 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); width: 100%; }
+        .info-title { color: #0A5C1D; font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+        .instructions-wrapper { display: flex; gap: 10px; align-items: center; }
+        .steps-list { list-style: none; font-size: 12px; color: #444; line-height: 1.5; flex: 1; }
+        .steps-list li { margin-bottom: 6px; }
+        
+        /* HOJA AGRANDADA */
+        .hoja-decoracion { width: 95px; height: 95px; object-fit: contain; }
+
+        /* PANTALLA: CÁMARA REAL / DIAGNÓSTICO AGRANDADO */
+        .video-stream-container { width: 100%; height: 360px; background-color: #153a19; border-radius: 24px; overflow: hidden; position: relative; border: 3px solid #0A5C1D; margin-top: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; }
+        #webcam-view { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .camera-placeholder-ui { position: absolute; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+        /* BARRA DE NAVEGACIÓN ESTILO INSTAGRAM CORREGIDA */
+        .bottom-nav-bar { width: 100%; height: 65px; background-color: white; border-top: 1px solid #e1e8e2; display: flex; justify-content: space-around; align-items: center; padding-bottom: 5px; z-index: 10; margin-top: auto; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #728a76; font-size: 10px; font-weight: 700; text-decoration: none; cursor: pointer; flex: 1; height: 100%; }
+        .nav-item img { width: 26px; height: 26px; object-fit: contain; margin-bottom: 2px; filter: grayscale(1) opacity(0.6); }
+        .nav-item.active-nav { color: #0A5C1D; }
+        .nav-item.active-nav img { filter: none; opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        
+        <div id="scr-bienvenida" class="screen active">
+            <div class="welcome-content">
+                <div class="logo-area">
+                    <img src="logo.png" class="logo-img" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
+                    <div class="main-title">Green<span>Leaf</span> AI</div>
+                    <div class="main-subtitle">Detector de enfermedades en hojas de plátano con inteligencia artificial.</div>
+                </div>
+
+                <div class="info-row-container">
+                    <div class="info-card-item">
+                        <div class="badge-icon">✓</div>
+                        <strong>Alta precisión</strong>
+                        <p>Identifica enfermedades al instante.</p>
+                    </div>
+                    <div class="info-card-item">
+                        <div class="badge-icon">🌿</div>
+                        <strong>Recomendaciones</strong>
+                        <p>Consejos inmediatos para tu cultivo.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <button class="btn-green" onclick="cambiarPantalla('scr-login')">Iniciar sesión</button>
+                    <button class="btn-green" style="background:#063a12; margin-bottom:0;" onclick="cambiarPantalla('scr-login')">Regístrate</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="scr-login" class="screen">
+            <div class="circle-decor c-yellow-top"></div>
+            
+            <button class="btn-green" style="background:none; color:#0A5C1D; box-shadow:none; text-align:left; padding:25px 20px 0 20px; width:auto; z-index:3;" onclick="cambiarPantalla('scr-bienvenida')">← Atrás</button>
+            
+            <div class="login-panel">
+                <h2>¡INICIEMOS!</h2>
+                <div style="margin-bottom:12px;">
+                    <label class="form-label">Email o Usuario</label>
+                    <input type="text" id="login-user" class="form-input" value="admin" placeholder="ejemplo@correo.com">
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="login-pass" class="form-input" value="1234" placeholder="••••••••">
+                </div>
+                
+                <label class="remember-container">
+                    <input type="checkbox" id="chk-remember" checked>
+                    <span>Recordar la contraseña</span>
+                </label>
+
+                <button class="btn-green btn-login-submit" onclick="procesarLoginConSplash()">Ingresar</button>
+            </div>
+        </div>
+
+        <div id="scr-splash" class="screen">
+            <div class="circle-decor c-green-topleft"></div>
+            <div class="circle-decor c-yellow-top" style="width:140px; height:140px;"></div>
+            <div class="circle-decor c-yellow-bottomleft"></div>
+            <div class="circle-decor c-green-small"></div>
+            <div class="circle-decor c-green-bottomright"></div>
+
+            <div class="welcome-content" style="justify-content: center; align-items: center; text-align: center;">
+                <img src="logo.png" style="width: 130px; height: 130px;" alt="Logo Splash" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
+                <h1 style="color:#0A5C1D; font-size:32px; font-weight:800; margin-top:15px;">¡Bienvenido!</h1>
+                <p style="color:#555; font-size:14px; margin-top:5px; font-weight:500;">Cargando GreenLeaf AI...</p>
+            </div>
+        </div>
+
+        <div id="scr-menu-principal" class="screen">
+            <div class="main-app-container">
+                <div class="top-banner" id="div-banner-fondo" style="background-image: url('fondo.jpg');">
+                    <div class="banner-header">
+                        <span>☰</span>
+                        <span>GreenLeaf AI</span>
+                        <span>🔔</span>
+                    </div>
+                    <div class="banner-body">
+                        <div class="banner-title">Detecta enfermedades en hojas de plátano</div>
+                        <div class="banner-text">Sube una imagen de la hoja y obtén un diagnóstico inmediato con inteligencia artificial.</div>
+                    </div>
+                </div>
+
+                <button class="btn-camera-trigger" onclick="cambiarPantalla('scr-diagnostico')">
+                    <img src="camara.png" alt="Cam" onerror="this.src='https://cdn-icons-png.flaticon.com/512/685/685655.png'">
+                    <p>Nueva<br>detección</p>
+                </button>
+
+                <div class="center-content">
+                    <div class="info-card">
+                        <div class="info-title">¿Cómo funciona?</div>
+                        <div class="instructions-wrapper">
+                            <ul class="steps-list">
+                                <li>1. Captura o sube una imagen de la hoja.</li>
+                                <li>2. Nuestra IA procesa los patrones foliares.</li>
+                                <li>3. Obtienes el diagnóstico clínico al instante.</li>
+                            </ul>
+                            <img src="hoja.png" class="hoja-decoracion" alt="Hoja" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921935.png'">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-nav-bar">
+                    <div class="nav-item active-nav" onclick="cambiarPantalla('scr-menu-principal')">
+                        <img src="home.png" alt="Home" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1946/1946436.png'">
+                        <span>Home</span>
+                    </div>
+                    <div class="nav-item" onclick="cambiarPantalla('scr-diagnostico')">
+                        <img src="camara.png" alt="Detectar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/685/685655.png'">
+                        <span>Detectar</span>
+                    </div>
+                    <div class="nav-item" onclick="alert('Historial de análisis guardados localmente.')">
+                        <img src="historial.png" alt="Historial" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2961/2961143.png'">
+                        <span>Historial</span>
+                    </div>
+                    <div class="nav-item" onclick="cambiarPantalla('scr-bienvenida')">
+                        <img src="perfil.png" alt="Perfil" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077063.png'">
+                        <span>Perfil</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="scr-diagnostico" class="screen">
+            <div class="main-app-container">
+                <div style="padding:20px; flex-grow:1; display:flex; flex-direction:column;">
+                    <button class="btn-green" style="background:none; color:#0A5C1D; box-shadow:none; text-align:left; width:auto; padding:0; margin-bottom:10px;" onclick="apagarCamara(); cambiarPantalla('scr-menu-principal');">← Volver</button>
+                    
+                    <h3 style="color:#0A5C1D; font-size:18px; font-weight:700; margin-bottom:5px;">📸 Escáner en Tiempo Real</h3>
+                    
+                    <div class="video-stream-container" id="camera-area">
+                        <video id="webcam-view" autoplay playsinline></video>
+                        <div class="camera-placeholder-ui" id="placeholder-ui">
+                            <span style="font-size:45px;">🌿</span>
+                            <button class="btn-green" style="width:auto; padding:8px 16px; font-size:13px; background:#D4E127; color:#0A5C1D;" onclick="encenderCamaraReal()">Encender Cámara Celular</button>
+                        </div>
+                    </div>
+
+                    <div id="resultado" style="display:none; background:white; padding:12px; border-radius:15px; margin-top:15px; border-left:5px solid #d9534f; box-shadow:0 4px 8px rgba(0,0,0,0.05);">
+                        <strong style="color:#d9534f; font-size:14px;">⚠️ Diagnóstico: Sigatoka Negra</strong>
+                        <p style="font-size:12px; margin-top:3px; color:#333;">Certeza del 94.2%. Se recomienda poda inmediata de las hojas afectadas.</p>
+                    </div>
+                </div>
+
+                <div class="bottom-nav-bar">
+                    <div class="nav-item" onclick="apagarCamara(); cambiarPantalla('scr-menu-principal')">
+                        <img src="home.png" alt="Home" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1946/1946436.png'">
+                        <span>Home</span>
+                    </div>
+                    <div class="nav-item active-nav" onclick="cambiarPantalla('scr-diagnostico')">
+                        <img src="camara.png" alt="Detectar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/685/685655.png'">
+                        <span>Detectar</span>
+                    </div>
+                    <div class="nav-item" onclick="alert('Historial')">
+                        <img src="historial.png" alt="Historial" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2961/2961143.png'">
+                        <span>Historial</span>
+                    </div>
+                    <div class="nav-item" onclick="apagarCamara(); cambiarPantalla('scr-bienvenida')">
+                        <img src="perfil.png" alt="Perfil" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077063.png'">
+                        <span>Perfil</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let localStream = null;
+
+        function cambiarPantalla(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // Simulación exacta de pantalla Splash de carga tras Login exitoso
+        function procesarLoginConSplash() {
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            
+            if(u.trim() !== "" && p === "1234") {
+                cambiarPantalla('scr-splash');
+                setTimeout(() => {
+                    cambiarPantalla('scr-menu-principal');
+                }, 2000); // 2 segundos de pantalla de bienvenida con círculos
+            } else {
+                alert('Usuario o contraseña inválidos.');
+            }
+        }
+
+        // CÓDIGO NATIVO PARA CONECTAR LA CÁMARA REAL DEL CELULAR
+        async function encenderCamaraReal() {
+            const video = document.getElementById('webcam-view');
+            const placeholder = document.getElementById('placeholder-ui');
+            const area = document.getElementById('camera-area');
+
+            try {
+                // Solicita acceso explícito a la cámara trasera (environment)
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" },
+                    audio: false
+                });
+                video.srcObject = localStream;
+                video.style.display = "block";
+                placeholder.style.display = "none";
+
+                // Simular captura automática a los 3 segundos de ver la hoja
+                setTimeout(() => {
+                    document.getElementById('resultado').style.display = "block";
+                }, 3000);
+
+            } catch (err) {
+                console.error("Error de cámara: ", err);
+                // Respaldo por si se abre local desde PC sin HTTPS o sin permisos
+                placeholder.innerHTML = "<span>🧬</span><p style='font-size:12px; color:white; padding:10px;'>Simulando escaneo local por falta de HTTPS seguro...</p>";
+                setTimeout(() => {
+                    document.getElementById('resultado').style.display = "block";
+                    placeholder.innerHTML = "<span style='color:#D4E127; font-weight:bold;'>✔ Escaneo Listo</span>";
+                }, 2000);
+            }
+        }
+
+        function apagarCamara() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('webcam-view').style.display = "none";
+            document.getElementById('placeholder-ui').style.display = "flex";
+            document.getElementById('resultado').style.display = "none";
+        }
+    </script>
+</body>
+</html>
