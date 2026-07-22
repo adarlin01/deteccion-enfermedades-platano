@@ -4,108 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GreenLeaf AI - Prototipo Oficial</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f0f4f1; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        
-        /* CONTENEDOR ESTILO CELULAR */
-        .phone-container {
-            width: 360px;
-            height: 740px;
-            background-color: #E2F0DF;
-            border-radius: 40px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* PANTALLAS */
-        .screen { display: none; flex-direction: column; height: 100%; justify-content: space-between; position: relative; }
-        .active { display: flex; }
-
-        /* DECORACIONES: CÍRCULOS AMARILLOS Y VERDES (FIGMA STYLE) */
-        .circle-decor { position: absolute; border-radius: 50%; z-index: 1; }
-        .c-yellow-top { width: 180px; height: 180px; background-color: #D4E127; top: -40px; right: -40px; }
-        .c-green-topleft { width: 100px; height: 100px; background-color: #0A5C1D; top: -20px; left: -30px; }
-        .c-yellow-bottomleft { width: 50px; height: 50px; background-color: #D4E127; bottom: 180px; left: 15px; }
-        .c-green-bottomright { width: 110px; height: 110px; background-color: #0A5C1D; bottom: -40px; right: -20px; }
-        .c-green-small { width: 30px; height: 30px; background-color: #71A832; bottom: 210px; right: 25px; }
-
-        /* PANTALLA 1: INICIO / BIENVENIDA */
-        .welcome-content { padding: 40px 24px; display: flex; flex-direction: column; height: 100%; justify-content: space-between; z-index: 2; position: relative; }
-        .logo-area { text-align: center; margin-top: 30px; }
-        .logo-img { width: 140px; height: 140px; object-fit: contain; }
-        .main-title { color: #0A5C1D; font-size: 32px; font-weight: 800; margin-top: 5px; }
-        .main-title span { color: #71A832; }
-        .main-subtitle { color: #4A5D4E; font-size: 13.5px; text-align: center; margin-top: 5px; font-weight: 500; }
-
-        /* RECUADRO DE INFORMACIÓN DEBAJO DEL SUBTÍTULO */
-        .info-row-container { background: white; border-radius: 20px; padding: 15px 10px; display: flex; justify-content: space-around; margin: 15px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .info-card-item { display: flex; flex-direction: column; align-items: center; text-align: center; width: 45%; }
-        .info-card-item .badge-icon { width: 32px; height: 32px; background: #E2F0DF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0A5C1D; font-weight: bold; margin-bottom: 5px; }
-        .info-card-item strong { font-size: 11.5px; color: #0A5C1D; }
-        .info-card-item p { font-size: 10px; color: #666; margin-top: 2px; line-height: 1.2; }
-
-        /* FORMULARIOS (LOGIN) */
-        .login-panel { background-color: #0A5C1D; border-radius: 35px; padding: 30px 20px; margin: auto 20px 20px 20px; z-index: 2; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .login-panel h2 { color: #D4E127; text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 20px; letter-spacing: 0.5px; }
-        .form-label { color: #E2F0DF; font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 5px; }
-        .form-input { width: 100%; padding: 12px; border: none; border-radius: 12px; background: white; margin-bottom: 15px; font-size: 14px; outline: none; }
-        
-        .remember-container { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; color: white; font-size: 12.5px; cursor: pointer; }
-        .remember-container input { accent-color: #D4E127; width: 15px; height: 15px; }
-
-        /* BOTONES */
-        .btn-green { background-color: #0A5C1D; color: white; border: none; padding: 14px; border-radius: 25px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 10px; }
-        .btn-login-submit { background-color: #D4E127; color: #0A5C1D; font-size: 16px; margin-bottom: 0; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-
-        /* PANTALLA NUEVA: BIENVENIDA TRANSITORIA (POST-LOGIN) */
-        .splash-screen { display: none; flex-direction: column; justify-content: center; align-items: center; height: 100%; background-color: #fff; text-align: center; padding: 20px; }
-
-        /* PANTALLA MENÚ PRINCIPAL */
-        .main-app-container { background-color: #f7f9f6; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .top-banner { width: 100%; height: 280px; position: relative; background-size: cover; background-position: center; border-radius: 0 0 45px 45px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; color: white; }
-        .top-banner::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,40,10,0.2) 0%, rgba(0,30,5,0.7) 100%); border-radius: 0 0 45px 45px; z-index: 1; }
-        .banner-header { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: bold; }
-        .banner-body { position: relative; z-index: 2; margin-bottom: 25px; }
-        .banner-title { font-size: 21px; font-weight: 700; margin-bottom: 5px; }
-        .banner-text { font-size: 12px; opacity: 0.95; line-height: 1.3; }
-        
-        /* BOTÓN CÁMARA CIRCULAR ENCIMA */
-        .btn-camera-trigger { width: 115px; height: 115px; background: white; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #0A5C1D; font-size: 11px; font-weight: bold; text-align: center; margin: -58px auto 0 auto; position: relative; z-index: 3; box-shadow: 0 6px 15px rgba(0,0,0,0.12); cursor: pointer; border: none; }
-        .btn-camera-trigger img { width: 35px; height: 35px; object-fit: contain; margin-bottom: 4px; }
-
-        /* ¿CÓMO FUNCIONA? E HOJA AGRANDADA */
-        .center-content { padding: 15px 20px; flex-grow: 1; display: flex; align-items: center; justify-content: center; }
-        .info-card { background: white; padding: 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); width: 100%; }
-        .info-title { color: #0A5C1D; font-size: 16px; font-weight: 700; margin-bottom: 10px; }
-        .instructions-wrapper { display: flex; gap: 10px; align-items: center; }
-        .steps-list { list-style: none; font-size: 12px; color: #444; line-height: 1.5; flex: 1; }
-        .steps-list li { margin-bottom: 6px; }
-        
-        /* HOJA AGRANDADA */
-        .hoja-decoracion { width: 95px; height: 95px; object-fit: contain; }
-
-        /* PANTALLA: CÁMARA REAL / DIAGNÓSTICO AGRANDADO */
-        .video-stream-container { width: 100%; height: 360px; background-color: #153a19; border-radius: 24px; overflow: hidden; position: relative; border: 3px solid #0A5C1D; margin-top: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; }
-        #webcam-view { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .camera-placeholder-ui { position: absolute; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-
-        /* BARRA DE NAVEGACIÓN ESTILO INSTAGRAM CORREGIDA */
-        .bottom-nav-bar { width: 100%; height: 65px; background-color: white; border-top: 1px solid #e1e8e2; display: flex; justify-content: space-around; align-items: center; padding-bottom: 5px; z-index: 10; margin-top: auto; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #728a76; font-size: 10px; font-weight: 700; text-decoration: none; cursor: pointer; flex: 1; height: 100%; }
-        .nav-item img { width: 26px; height: 26px; object-fit: contain; margin-bottom: 2px; filter: grayscale(1) opacity(0.6); }
-        .nav-item.active-nav { color: #0A5C1D; }
-        .nav-item.active-nav img { filter: none; opacity: 1; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
-    <div class="phone-container">
+    <div class="phone-container" id="main-phone-box">
         
         <div id="scr-bienvenida" class="screen active">
+            <div class="circle-decor c-welcome-yellow"></div>
+            <div class="circle-decor c-welcome-green"></div>
+            <div class="circle-decor c-welcome-lemon"></div>
+
             <div class="welcome-content">
                 <div class="logo-area">
                     <img src="logo.png" class="logo-img" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
@@ -115,12 +26,16 @@
 
                 <div class="info-row-container">
                     <div class="info-card-item">
-                        <div class="badge-icon">✓</div>
+                        <div class="badge-icon">
+                            <img src="like.png" class="info-icon-img" alt="Precision" onerror="this.src='https://cdn-icons-png.flaticon.com/512/179/179713.png'">
+                        </div>
                         <strong>Alta precisión</strong>
                         <p>Identifica enfermedades al instante.</p>
                     </div>
                     <div class="info-card-item">
-                        <div class="badge-icon">🌿</div>
+                        <div class="badge-icon">
+                            <img src="recomendaciones.png" class="info-icon-img" alt="Tips" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3503/3503825.png'">
+                        </div> 
                         <strong>Recomendaciones</strong>
                         <p>Consejos inmediatos para tu cultivo.</p>
                     </div>
@@ -128,211 +43,672 @@
 
                 <div>
                     <button class="btn-green" onclick="cambiarPantalla('scr-login')">Iniciar sesión</button>
-                    <button class="btn-green" style="background:#063a12; margin-bottom:0;" onclick="cambiarPantalla('scr-login')">Regístrate</button>
+                   <button class="btn-green" style="background:#063a12; margin-bottom:0;" onclick="cambiarPantalla('scr-registro')">Regístrate</button>
                 </div>
             </div>
         </div>
 
         <div id="scr-login" class="screen">
+            <div class="circle-decor c-green-topleft"></div>
             <div class="circle-decor c-yellow-top"></div>
+            <div class="circle-decor c-splash-yellow-bottomleft"></div>
+            <div class="circle-decor c-green-bottomright"></div>
+            <div class="circle-decor c-green-small"></div>
+
+            <button class="btn-back" onclick="cambiarPantalla('scr-bienvenida')">← Atrás</button>
             
-            <button class="btn-green" style="background:none; color:#0A5C1D; box-shadow:none; text-align:left; padding:25px 20px 0 20px; width:auto; z-index:3;" onclick="cambiarPantalla('scr-bienvenida')">← Atrás</button>
-            
+            <div class="logo-area" style="margin-top: 50px; margin-bottom: 10px;">
+                <img src="logo.png" class="logo-img" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
+            </div>
+
             <div class="login-panel">
                 <h2>¡INICIEMOS!</h2>
                 <div style="margin-bottom:12px;">
                     <label class="form-label">Email o Usuario</label>
-                    <input type="text" id="login-user" class="form-input" value="admin" placeholder="ejemplo@correo.com">
+                    <input type="text" id="login-user" class="form-input" placeholder="Correo registrado">
                 </div>
                 <div style="margin-bottom:12px;">
                     <label class="form-label">Contraseña</label>
-                    <input type="password" id="login-pass" class="form-input" value="1234" placeholder="••••••••">
+                    <input type="password" id="login-pass" class="form-input" placeholder="Contraseña"> 
                 </div>
                 
-                <label class="remember-container">
-                    <input type="checkbox" id="chk-remember" checked>
-                    <span>Recordar la contraseña</span>
-                </label>
-
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:6px;">
+                    <label class="remember-container" style="margin-bottom:0;">
+                        <input type="checkbox" id="chk-remember" checked>
+                        <span>Recordar la contraseña</span>
+                    </label>
+                    <span onclick="cambiarPantalla('scr-recuperar-email')" style="color:var(--yellow-accent); font-size:12px; font-weight:700; text-decoration:underline; cursor:pointer;">
+                        Recuperar contraseña
+                    </span>
+                </div>
+                
                 <button class="btn-green btn-login-submit" onclick="procesarLoginConSplash()">Ingresar</button>
+            </div>
+
+            <div class="account-switch-text" onclick="cambiarPantalla('scr-registro')">
+                ¿No tienes cuenta aún? <span>Regístrate</span>
             </div>
         </div>
 
-        <div id="scr-splash" class="screen">
+        <div id="scr-registro" class="screen">
             <div class="circle-decor c-green-topleft"></div>
-            <div class="circle-decor c-yellow-top" style="width:140px; height:140px;"></div>
-            <div class="circle-decor c-yellow-bottomleft"></div>
-            <div class="circle-decor c-green-small"></div>
+            <div class="circle-decor c-reg-lemon"></div>
+            <div class="circle-decor c-splash-yellow-bottomleft" style="bottom: 15px; left: 20px;"></div>
             <div class="circle-decor c-green-bottomright"></div>
+            <div class="circle-decor c-green-small"></div>
 
+            <button class="btn-back" onclick="cambiarPantalla('scr-bienvenida')">← Atrás</button>
+            
+            <div class="logo-area" style="margin-top: 50px; margin-bottom: 5px;">
+                <img src="logo.png" class="logo-img" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
+            </div>
+
+            <div class="login-panel" style="margin-bottom: 10px;">
+                <h2>REGÍSTRATE</h2>
+                <div style="margin-bottom:10px;">
+                    <label class="form-label">Nombre completo</label>
+                    <input type="text" id="reg-name" class="form-input" placeholder="Tu nombre y apellido">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label class="form-label">Correo</label>
+                    <input type="email" id="reg-email" class="form-input" placeholder="ejemplo@correo.com">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label class="form-label">Cree una contraseña</label>
+                    <input type="password" id="reg-pass" class="form-input" placeholder="Mínimo 4 caracteres">
+                </div>
+                <label class="remember-container" style="margin-bottom: 12px;">
+                    <input type="checkbox" id="chk-remember-reg" checked>
+                    <span>Recordar la contraseña</span>
+                </label>
+                <button class="btn-green btn-login-submit" onclick="registrarUsuarioEstructura()">Registrarse</button>
+            </div>
+
+            <div class="account-switch-text" onclick="cambiarPantalla('scr-login')" style="margin-bottom: 20px;">
+                ¿Ya tienes cuenta? <span>Inicia sesión</span>
+            </div>
+        </div>
+
+        <div id="scr-recuperar-email" class="screen">
+    <div class="circle-decor c-green-topleft"></div>
+    <div class="circle-decor c-yellow-top"></div>
+    <div class="circle-decor c-splash-yellow-bottomleft"></div>
+    <div class="circle-decor c-green-bottomright"></div>
+    <div class="circle-decor c-green-small"></div>
+
+    <button class="btn-back" onclick="cambiarPantalla('scr-login')">← Atrás</button>
+
+    <div class="logo-area" style="margin-top: 130px; margin-bottom: 10px;">
+        <img src="logo.png" class="logo-img" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
+    </div>
+
+    <div class="login-panel">
+        <h2>RECUPERAR CONTRASEÑA</h2>
+        <p style="color:#E2F0DF; font-size:13px; text-align:center; margin-bottom:15px;">
+            Escribe tu correo registrado y te enviaremos un código de verificación.
+        </p>
+        <div style="margin-bottom:6px;">
+            <label class="form-label">Correo</label>
+            <input type="email" id="recuperar-email" class="form-input" placeholder="ejemplo@correo.com">
+        </div>
+        <p id="recuperar-email-error" style="color:#ffd9d9; background:rgba(0,0,0,0.15); padding:6px 10px; border-radius:8px; font-size:12px; font-weight:600; margin-bottom:12px; display:none;"></p>
+        <button class="btn-green btn-login-submit" onclick="enviarCodigoRecuperacion()">Enviar código</button>
+    </div>
+</div>
+
+<div id="scr-recuperar-codigo" class="screen">
+    <div class="circle-decor c-green-topleft"></div>
+    <div class="circle-decor c-yellow-top"></div>
+    <div class="circle-decor c-splash-yellow-bottomleft"></div>
+    <div class="circle-decor c-green-bottomright"></div>
+    <div class="circle-decor c-green-small"></div>
+
+    <button class="btn-back" onclick="cambiarPantalla('scr-recuperar-email')">← Atrás</button>
+
+        <div class="logo-area" style="margin-top: 50px; margin-bottom: 10px;">
+            <img src="logo.png" class="logo-img" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
+        </div>
+
+            <div class="login-panel">
+                <h2>VERIFICA TU CÓDIGO</h2>
+                <p style="color:#E2F0DF; font-size:13px; text-align:center; margin-bottom:15px;">
+                    Ingresa el código de 4 dígitos que enviamos a tu correo.
+                </p>
+                <div style="margin-bottom:6px;">
+                    <label class="form-label">Código de verificación</label>
+                    <input type="text" id="recuperar-codigo-input" class="form-input" placeholder="0000" maxlength="4" inputmode="numeric">
+                </div>
+                <p id="recuperar-codigo-error" style="color:#ffd9d9; background:rgba(0,0,0,0.15); padding:6px 10px; border-radius:8px; font-size:12px; font-weight:600; margin-bottom:12px; display:none;"></p>
+                <button class="btn-green btn-login-submit" onclick="verificarCodigoRecuperacion()">Verificar código</button>
+            </div>
+        </div>
+
+        <div id="scr-cambiar-clave" class="screen">
+            <div class="circle-decor c-green-topleft"></div>
+            <div class="circle-decor c-reg-lemon"></div>
+            <div class="circle-decor c-splash-yellow-bottomleft" style="bottom: 15px; left: 20px;"></div>
+            <div class="circle-decor c-green-bottomright"></div>
+            <div class="circle-decor c-green-small"></div>
+
+            <button class="btn-back" onclick="volverDesdeCambioClave()">← Atrás</button>
+
+            <div class="logo-area" style="margin-top: 60px; margin-bottom: 15px;">
+                <img src="logo.png" class="logo-img" style="width:170px; height:170px;" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
+            </div>
+
+            <div class="login-panel">
+                <h2>NUEVA CONTRASEÑA</h2>
+
+            <div style="margin-bottom:12px;">
+                <label class="form-label">Escribe tu contraseña nueva</label>
+                <input type="password" id="pass-nueva" class="form-input" placeholder="Mínimo 4 caracteres">
+            </div>
+
+            <div style="margin-bottom:6px;">
+                <label class="form-label">Repetir contraseña</label>
+                <input type="password" id="pass-repetir" class="form-input" placeholder="Repite la contraseña">
+            </div>
+
+            <p id="pass-error-msg" style="color:#ffd9d9; background:rgba(0,0,0,0.15); padding:6px 10px; border-radius:8px; font-size:12px; font-weight:600; margin-bottom:12px; display:none;"></p>
+
+            <button class="btn-green btn-login-submit" onclick="procesarCambioContrasena()">Cambiar contraseña</button>
+            </div>
+        </div>
+
+
+        <div id="scr-splash" class="screen">
+            <div class="circle-decor c-splash-green-top"></div>
+            <div class="circle-decor c-splash-yellow-top"></div>
+            <div class="circle-decor c-splash-yellow-bottomleft"></div>
+            <div class="circle-decor c-splash-green-small"></div>
+            <div class="circle-decor c-splash-green-bottomright"></div>  
             <div class="welcome-content" style="justify-content: center; align-items: center; text-align: center;">
-                <img src="logo.png" style="width: 130px; height: 130px;" alt="Logo Splash" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
+                <img src="logo.png" style="width: 190px; height: 190px;" alt="Logo Splash" onerror="this.src='https://cdn-icons-png.flaticon.com/512/188/188333.png'">
                 <h1 style="color:#0A5C1D; font-size:32px; font-weight:800; margin-top:15px;">¡Bienvenido!</h1>
                 <p style="color:#555; font-size:14px; margin-top:5px; font-weight:500;">Cargando GreenLeaf AI...</p>
             </div>
         </div>
 
+        
+        
+
         <div id="scr-menu-principal" class="screen">
-            <div class="main-app-container">
-                <div class="top-banner" id="div-banner-fondo" style="background-image: url('fondo.jpg');">
-                    <div class="banner-header">
-                        <span>☰</span>
-                        <span>GreenLeaf AI</span>
-                        <span>🔔</span>
+    <div class="home-banner" style="background-image: url('fondo.png');">
+        <div class="banner-overlay">
+            <span class="app-brand">GreenLeaf AI</span>
+            <h1 class="banner-title">Detecta enfermedades en hojas de plátano</h1>
+            <p class="banner-subtitle">Sube una imagen de la hoja y obtén un diagnóstico inmediato con inteligencia artificial.</p>
+        </div>
+    </div>
+
+    <div id="btn-nueva-deteccion-home" class="action-trigger-container">
+        <button class="btn-detect" onclick="cambiarPantalla('scr-diagnostico')">
+            <i class="fas fa-camera"></i>
+            <span>Nueva detección</span>
+        </button>
+    </div>
+
+    <div class="home-info-card">
+        <div class="info-content">
+            <h2 class="info-title">¿Cómo funciona?</h2>
+            <ol class="info-steps">
+                <li>Captura o sube una imagen de la hoja.</li>
+                <li>Nuestra IA procesa los patrones foliares.</li>
+                <li>Obtienes el diagnóstico.</li>
+            </ol>
+        </div>
+        <div class="info-image-container">
+            <img src="tallo.png" alt="Tallo" class="info-side-img">
+        </div>
+    </div>
+
+    </div>
+      
+        <div id="scr-diagnostico" class="screen">
+    <div class="upload-container">
+        <div class="upload-header">
+            <span class="btn-back-upload" onclick="guardarResultadoYVolverInicio()">← Inicio</span>
+            GreenLeaf AI
+        </div>
+
+        <div class="upload-body">
+            <div class="upload-title">Subir imagen de la hoja</div>
+            <div class="upload-subtitle">Toma una foto o selecciona una imagen de la galería</div>
+
+            <input type="file" id="input-camara" accept="image/*" capture="environment" style="display: none;" onchange="imagenSeleccionada(this)">
+            <input type="file" id="input-galeria" accept="image/*" style="display: none;" onchange="imagenSeleccionada(this)">
+
+            <div class="upload-logo-box">
+            <img src="logo.png" alt="Logo GreenLeaf AI" class="upload-main-logo">
+            </div>
+
+            <button class="btn-upload-action" onclick="document.getElementById('input-camara').click()">
+                Tomar foto
+            </button>
+
+            <button class="btn-upload-action" onclick="document.getElementById('input-galeria').click()">
+                Elegir de la galería
+            </button>
+            </button>
+        </div>
+    </div>
+    </div>
+
+        <div id="scr-analizando" class="screen">
+            <div class="upload-container" style="position: relative; overflow: hidden; height: 100%;">
+                <div class="upload-header" style="z-index: 10; position: relative;">
+                    <span class="btn-back-upload" onclick="cambiarPantalla('scr-diagnostico')">← Atrás</span>
+                    GreenLeaf AI
+                </div>
+                
+                <div id="analysis-bg-image" class="image-preview-background"></div>
+
+                <div class="logo-loader-container">
+                    <div class="spinner"></div>
+                    <img src="https://cdn-icons-png.flaticon.com/512/188/188333.png" alt="Logo">
+                </div>
+                
+                <div class="bottom-analysis-card">
+                    <div class="analysis-status-title">Analizando imagen...</div>
+                    <ul class="status-list">
+                        <li class="status-item" id="task-1"><div class="check-icon"></div> <span>Procesando imagen</span> <span class="check-mark"></span></li>
+                        <li class="status-item" id="task-2"><div class="check-icon"></div> <span>Extrayendo características</span> <span class="check-mark"></span></li>
+                        <li class="status-item" id="task-3"><div class="check-icon"></div> <span>Comparando con el modelo</span> <span class="check-mark"></span></li>
+                        <li class="status-item" id="task-4"><div class="check-icon"></div> <span>Generando resultado</span> <span class="check-mark"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="scr-resultado-final" class="screen">
+            <div class="upload-container" style="background: var(--card-bg); display: flex; flex-direction: column; height: 100%;">
+                <div class="upload-header">
+                    <span class="btn-back-upload" onclick="cambiarPantalla('scr-menu-principal')">← Inicio</span>
+                    GreenLeaf AI
+                </div>
+                <div class="upload-body" id="area-reporte-pdf" style="justify-content: flex-start; padding: 15px; flex-grow: 1; width: 100%;">
+                    <h2 style="color: var(--green-primary); margin: 10px 0; font-size: var(--font-h2); text-align: center; width: 100%;">Resultado del análisis</h2>
+                    <img id="res-img-preview" src="" alt="Imagen analizada" class="result-preview-img">
+                    <div class="result-card">
+                        <p style="color: #666; font-size: calc(var(--font-base) - 1px); margin-bottom: 2px;">La IA ha detectado:</p>
+                       
+
+
+                        <h3 id="res-enfermedad" style="color: #d9534f; font-size: calc(var(--font-base) + 10px); margin: 5px 0; font-weight: bold;">
+                        Resultado
+                        </h3>
+
+                        <p id="res-confianza" style="font-size: var(--font-base); color: var(--text-main); font-weight: 500;">
+                          Nivel de confianza: --
+                        </p>        
+
+
+
+
+                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid var(--card-border);">
+
+                        <p id="res-descripcion" style="text-align: left; font-size: calc(var(--font-base) - 0.5px); line-height: 1.4; color: var(--text-main);">
+                            <strong>Recomendación:</strong> Esperando análisis...
+                        </p>
+
+
+                         </div>
+
+                    <div style="width: 100%; text-align: left; margin-top: 15px;">
+                        <label class="form-label" style="color: var(--green-primary); font-weight: bold;">Notas de campo del análisis:</label>
+                        <textarea id="txt-analisis-notas" class="form-input" style="height: 60px; resize: none; border: 1px solid var(--card-border);" placeholder="Escribe observaciones adicionales sobre el lote..."></textarea>
                     </div>
-                    <div class="banner-body">
-                        <div class="banner-title">Detecta enfermedades en hojas de plátano</div>
-                        <div class="banner-text">Sube una imagen de la hoja y obtén un diagnóstico inmediato con inteligencia artificial.</div>
-                    </div>
+                    
+
+                    <button class="btn-green" style="margin-top: 10px;" onclick="guardarYAnalizarNuevaHoja()">
+                        Analizar nueva hoja
+                    </button>
+
+
+                    <button class="btn-green" style="background-color: #2e6da4;" onclick="exportarReportePDF()">
+                        Descargar Reporte PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+       <div id="scr-tips" class="screen">
+    <div class="upload-container">
+        <div class="upload-header">
+            <span class="btn-back-upload" onclick="cambiarPantalla('scr-menu-principal')">← Atrás</span>
+            GreenLeaf AI
+        </div>
+
+        <div class="upload-body" style="justify-content: flex-start;">
+            <div class="upload-title" style="margin-bottom: 8px;">Guía de Diagnóstico</div>
+            <p class="tips-intro">
+                Consulta información sobre las clases que puede identificar nuestra IA.
+            </p>
+
+            <div class="tips-list-container">
+                <div class="disease-rect-btn" onclick="verDetalleEnfermedad('Sana')">
+                    Hoja Sana <span class="arrow">➔</span>
                 </div>
 
-                <button class="btn-camera-trigger" onclick="cambiarPantalla('scr-diagnostico')">
-                    <img src="camara.png" alt="Cam" onerror="this.src='https://cdn-icons-png.flaticon.com/512/685/685655.png'">
-                    <p>Nueva<br>detección</p>
+                <div class="disease-rect-btn" onclick="verDetalleEnfermedad('Sigatoka')">
+                    Sigatoka <span class="arrow">➔</span>
+                </div>
+
+                <div class="disease-rect-btn" onclick="verDetalleEnfermedad('Cordana')">
+                    Cordana <span class="arrow">➔</span>
+                </div>
+
+                <div class="disease-rect-btn" onclick="verDetalleEnfermedad('Pestalotiopsis')">
+                    Pestalotiopsis <span class="arrow">➔</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div id="scr-detalle-enfermedad" class="screen">
+    <div class="upload-container">
+        <div class="upload-header">
+            <span class="btn-back-upload" onclick="cambiarPantalla('scr-tips')">← Atrás</span>
+            GreenLeaf AI
+        </div>
+
+        <div class="upload-body detail-disease-body">
+            <h2 id="det-titulo" class="detail-main-title">Nombre</h2>
+
+            <div class="detail-section-title">Descripción general</div>
+            <p id="det-descripcion" class="detail-text">Cargando...</p>
+
+            <div class="detail-section-title">Tipos o enfermedades relacionadas</div>
+            <p id="det-tipos" class="detail-text">Cargando...</p>
+
+            <div class="detail-section-title">Síntomas visibles</div>
+            <p id="det-sintomas" class="detail-text">Cargando...</p>
+
+            <div class="detail-section-title">Posibles causas</div>
+            <p id="det-causas" class="detail-text">Cargando...</p>
+
+            <div class="detail-section-title">Recomendaciones agronómicas</div>
+            <p id="det-recomendaciones" class="detail-text">Cargando...</p>
+
+            <div class="detail-section-title">Imágenes de referencia</div>
+            <p class="detail-image-hint">Toca una imagen para verla más grande.</p>
+            <div id="det-imagenes" class="disease-gallery"></div>
+        </div>
+    </div>
+</div>
+
+
+ <section id="scr-faq" class="screen">
+
+  <div class="upload-container">
+
+    <div class="upload-header">
+      <span class="btn-back-upload" onclick="cambiarPantalla('scr-perfil')">← Atrás</span>
+      Preguntas Frecuentes
+    </div>
+
+    <div class="upload-body faq-body">
+
+      <div class="faq-logo-container">
+        <img src="logo.png" alt="logo">
+      </div>
+
+     <div class="faq-container">
+
+  <div class="faq-item">
+    <button onclick="toggleFaq(this)">¿Cómo uso la aplicación para analizar una hoja?</button>
+    <p class="faq-answer">
+      Ve a la pantalla principal, presiona “Nueva detección”, toma una foto o selecciona una imagen de una hoja de plátano y espera el análisis de la IA.
+    </p>
+  </div>
+
+  <div class="faq-item">
+    <button onclick="toggleFaq(this)">¿Qué tipos de enfermedades detecta la IA?</button>
+    <p class="faq-answer">
+      El sistema detecta: Hoja sana, Sigatoka, Cordana y Pestalotiopsis.
+    </p>
+  </div>
+
+  <div class="faq-item">
+    <button onclick="toggleFaq(this)">¿Qué significa el porcentaje de confianza?</button>
+    <p class="faq-answer">
+      Es el nivel de seguridad del modelo al hacer la predicción. Mientras más alto, más segura es la detección.
+    </p>
+  </div>
+
+  <div class="faq-item">
+    <button onclick="toggleFaq(this)">¿Puedo guardar los análisis?</button>
+    <p class="faq-answer">
+      Sí, todos los resultados se guardan automáticamente en el historial local del dispositivo.
+    </p>
+  </div>
+
+  <div class="faq-item">
+    <button onclick="toggleFaq(this)">¿La aplicación funciona sin internet?</button>
+    <p class="faq-answer">
+      La interfaz funciona sin internet, pero el análisis con IA necesita conexión al servidor.
+    </p>
+  </div>
+
+  <div class="faq-item">
+    <button onclick="toggleFaq(this)">¿Cómo contacto soporte?</button>
+    <p class="faq-answer">
+      Ve a Perfil → Soporte y escribe tu consulta. El equipo la revisará.
+    </p>
+  </div>
+
+</div>
+</section>
+
+
+        <div id="supportModal" class="modal hidden">
+  <div class="modal-box">
+
+    <h3>Soporte</h3>
+
+    <textarea id="mensajeSoporte" placeholder="Escribe tu mensaje..."></textarea>
+
+    <button onclick="enviarSoporte()">Enviar</button>
+
+    <span class="close" onclick="closeSupport()">✖</span>
+
+  </div>
+</div>
+
+        <div id="scr-historial" class="screen">
+            <div class="upload-container">
+                <div class="upload-header">
+                    <span class="btn-back-upload" onclick="cambiarPantalla('scr-menu-principal')">← Atrás</span>
+                    Historial Local
+                    <span class="btn-options-trigger" onclick="conmutarMenuOrdenamiento(event)">⋮</span>
+                    <div id="box-menu-orden" class="sort-menu">
+                        <div class="sort-option" onclick="ordenarHistorialInterfaz('desc')">Recientes primero</div>
+                        <div class="sort-option" onclick="ordenarHistorialInterfaz('asc')">Antiguos primero</div>
+                    </div>
+                </div>
+                <div class="upload-body" style="justify-content: flex-start;">
+                    <div class="upload-title" style="margin-bottom: 15px;">Mis Análisis</div>
+
+                <button class="btn-export-history" onclick="exportarHistorialPDF()">
+                      Exportar historial PDF
                 </button>
 
-                <div class="center-content">
-                    <div class="info-card">
-                        <div class="info-title">¿Cómo funciona?</div>
-                        <div class="instructions-wrapper">
-                            <ul class="steps-list">
-                                <li>1. Captura o sube una imagen de la hoja.</li>
-                                <li>2. Nuestra IA procesa los patrones foliares.</li>
-                                <li>3. Obtienes el diagnóstico clínico al instante.</li>
-                            </ul>
-                            <img src="hoja.png" class="hoja-decoracion" alt="Hoja" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921935.png'">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bottom-nav-bar">
-                    <div class="nav-item active-nav" onclick="cambiarPantalla('scr-menu-principal')">
-                        <img src="home.png" alt="Home" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1946/1946436.png'">
-                        <span>Home</span>
-                    </div>
-                    <div class="nav-item" onclick="cambiarPantalla('scr-diagnostico')">
-                        <img src="camara.png" alt="Detectar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/685/685655.png'">
-                        <span>Detectar</span>
-                    </div>
-                    <div class="nav-item" onclick="alert('Historial de análisis guardados localmente.')">
-                        <img src="historial.png" alt="Historial" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2961/2961143.png'">
-                        <span>Historial</span>
-                    </div>
-                    <div class="nav-item" onclick="cambiarPantalla('scr-bienvenida')">
-                        <img src="perfil.png" alt="Perfil" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077063.png'">
-                        <span>Perfil</span>
-                    </div>
+                <div id="wrapper-lista-historial" class="history-list"></div>
                 </div>
             </div>
         </div>
 
-        <div id="scr-diagnostico" class="screen">
-            <div class="main-app-container">
-                <div style="padding:20px; flex-grow:1; display:flex; flex-direction:column;">
-                    <button class="btn-green" style="background:none; color:#0A5C1D; box-shadow:none; text-align:left; width:auto; padding:0; margin-bottom:10px;" onclick="apagarCamara(); cambiarPantalla('scr-menu-principal');">← Volver</button>
-                    
-                    <h3 style="color:#0A5C1D; font-size:18px; font-weight:700; margin-bottom:5px;">📸 Escáner en Tiempo Real</h3>
-                    
-                    <div class="video-stream-container" id="camera-area">
-                        <video id="webcam-view" autoplay playsinline></video>
-                        <div class="camera-placeholder-ui" id="placeholder-ui">
-                            <span style="font-size:45px;">🌿</span>
-                            <button class="btn-green" style="width:auto; padding:8px 16px; font-size:13px; background:#D4E127; color:#0A5C1D;" onclick="encenderCamaraReal()">Encender Cámara Celular</button>
-                        </div>
-                    </div>
-
-                    <div id="resultado" style="display:none; background:white; padding:12px; border-radius:15px; margin-top:15px; border-left:5px solid #d9534f; box-shadow:0 4px 8px rgba(0,0,0,0.05);">
-                        <strong style="color:#d9534f; font-size:14px;">⚠️ Diagnóstico: Sigatoka Negra</strong>
-                        <p style="font-size:12px; margin-top:3px; color:#333;">Certeza del 94.2%. Se recomienda poda inmediata de las hojas afectadas.</p>
-                    </div>
+        <div id="scr-detalle-historial-completo" class="screen">
+            <div class="upload-container">
+                <div class="upload-header">
+                    <span class="btn-back-upload" onclick="cambiarPantalla('scr-historial')">← Volver</span>
+                    Detalle Archivado
                 </div>
+                <div class="upload-body" style="justify-content: flex-start; background: var(--card-bg); text-align: left;">
+                   <h2 id="hist-det-title" style="color: var(--green-primary); font-size: var(--font-h2); margin-bottom: 10px;">Enfermedad</h2>
 
-                <div class="bottom-nav-bar">
-                    <div class="nav-item" onclick="apagarCamara(); cambiarPantalla('scr-menu-principal')">
-                        <img src="home.png" alt="Home" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1946/1946436.png'">
-                        <span>Home</span>
-                    </div>
-                    <div class="nav-item active-nav" onclick="cambiarPantalla('scr-diagnostico')">
-                        <img src="camara.png" alt="Detectar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/685/685655.png'">
-                        <span>Detectar</span>
-                    </div>
-                    <div class="nav-item" onclick="alert('Historial')">
-                        <img src="historial.png" alt="Historial" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2961/2961143.png'">
-                        <span>Historial</span>
-                    </div>
-                    <div class="nav-item" onclick="apagarCamara(); cambiarPantalla('scr-bienvenida')">
-                        <img src="perfil.png" alt="Perfil" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077063.png'">
-                        <span>Perfil</span>
-                    </div>
+                <p id="hist-det-date" style="font-size: calc(var(--font-base) - 2px); color: #777; margin-bottom: 8px;">
+                  Fecha
+                </p>
+
+                <p id="hist-det-confidence" style="font-size: 14px; color: var(--green-primary); font-weight: bold; margin-bottom: 15px;">
+                   Confianza: --
+                </p>
+
+                <img id="hist-det-img" src="" style="width: 100%; height: 180px; object-fit: cover; border-radius: 14px; margin-bottom: 15px;" alt="Muestra">
+
+                <div class="detail-section-title">Descripción y recomendación</div>
+                <p id="hist-det-description" class="detail-text" style="background: #fdfdfd; padding: 10px; border-radius: 8px; border: 1px solid #eee;">
+                   No hay descripción guardada.
+                </p>
+
+                    <div class="detail-section-title">Notas Guardadas en Campo</div>
+                <p id="hist-det-notes" class="detail-text" style="background: #fdfdfd; padding: 10px; border-radius: 8px; border: 1px solid #eee;">
+                  Ninguna nota.
+                    </p>
+                    <button class="btn-export-detail" onclick="exportarDetalleHistorialPDF()">
+                        Exportar análisis PDF
+                    </button>
+                   <button class="btn-danger-outline" onclick="eliminarRegistroActualHistorial()">Eliminar Registro</button>
                 </div>
             </div>
         </div>
+
+        <div id="scr-perfil" class="screen">
+    <div class="upload-container">
+        <div class="upload-header">
+            <span class="btn-back-upload" onclick="cambiarPantalla('scr-menu-principal')">← Atrás</span>
+            Mi Perfil
+        </div>
+
+        <div class="upload-body profile-body">
+
+            <div class="profile-avatar-container" onclick="document.getElementById('input-avatar-archivo').click()">
+                <img id="img-user-avatar" class="profile-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Avatar">
+                <div class="profile-avatar-overlay">✎</div>
+            </div>
+
+            <input type="file" id="input-avatar-archivo" accept="image/*" style="display: none;" onchange="cambiarFotoPerfilLogica(this)">
+
+            <div id="lbl-user-profile-name" class="profile-name">Hada Montenegro</div>
+            <div id="lbl-user-profile-email" class="profile-email">mont00@icloiud.com</div>
+
+            <div class="profile-stats-grid">
+                <div class="profile-stat-card">
+                    <span id="stat-total-analisis">0</span>
+                    <p>Análisis</p>
+                </div>
+
+                <div class="profile-stat-card">
+                    <span id="stat-ultimo-resultado">N/A</span>
+                    <p>Último resultado</p>
+                </div>
+            </div>
+
+            <div class="config-panel profile-section">
+                <h3 class="profile-section-title">Configuración</h3>
+
+                <div class="config-row">
+                    <span>Modo Oscuro</span>
+                    <label class="switch-ui">
+                        <input type="checkbox" id="chk-dark-mode" onchange="conmutarTemaOscuro(this.checked)">
+                        <span class="slider-ui"></span>
+                    </label>
+                </div>
+
+                <div class="config-row">
+                    <span>Tamaño de Fuente</span>
+                    <select id="sel-font-size" class="select-ui" onchange="ajustarEscalaTexto(this.value)">
+                        <option value="normal">Mediana</option>
+                        <option value="small">Pequeña</option>
+                        <option value="large">Grande</option>
+                    </select>
+                </div>
+
+                <div class="config-row" onclick="abrirCambiarContrasena()" style="cursor:pointer;">
+                    <span>Cambiar contraseña</span>
+                    <span style="color:var(--green-primary); font-weight:bold; font-size:16px;">➔</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Soporte</h3>
+                <div class="support-box">
+                    <button class="btn-support" onclick="cambiarPantalla('scr-faq')">
+                        Ayuda y preguntas frecuentes
+                    </button>
+
+                    <button class="btn-support" onclick="openSupport()">
+                        Contactar soporte
+                    </button>
+                </div>
+            </div>
+
+            <div class="config-panel profile-section">
+                <h3 class="profile-section-title">Datos de la aplicación</h3>
+
+                <div class="profile-info-row">
+                    <span>Modelo</span>
+                    <strong>CNN</strong>
+                </div>
+
+                <div class="profile-info-row">
+                    <span>Clases</span>
+                    <strong>Sana, Sigatoka, Cordana, Pestalotiopsis</strong>
+                </div>
+
+                <div class="profile-info-row">
+                    <span>Versión</span>
+                    <strong>1.0</strong>
+                </div>
+            </div>
+
+            <button class="btn-profile-danger" onclick="borrarHistorialLocal()">
+                Borrar historial
+            </button>
+
+            <button class="btn-profile-logout" onclick="cerrarSesionUsuario()">
+                Cerrar Sesión
+            </button>
+
+        </div>
+    </div>
+</div>
+
+        <div id="global-bottom-nav" class="bottom-nav-bar">
+
+        <div id="nav-home" class="nav-item active-nav" onclick="gestorNavegacionGlobal('scr-menu-principal', 'nav-home')">
+        <img src="home.png" alt="Home">
+        <span>Home</span>
+        </div>
+
+     <div id="nav-tips" class="nav-item" onclick="gestorNavegacionGlobal('scr-tips', 'nav-tips')">
+        <img src="tips.png" alt="Tips">
+        <span>Tips</span>
+        </div>
+
+     <div id="nav-history" class="nav-item" onclick="gestorNavegacionGlobal('scr-historial', 'nav-history')">
+        <img src="historial.png" alt="Historial">
+        <span>Historial</span>
+     </div>
+
+        <div id="nav-profile" class="nav-item" onclick="gestorNavegacionGlobal('scr-perfil', 'nav-profile')">
+        <img src="perfil.png" alt="Perfil">
+        <span>Perfil</span>
+        </div>
+
+        </div>
+
+            <div id="recoveryModal" class="recovery-modal hidden">
+
+          </div>
+
+        <div id="toast" class="toast"></div>
 
     </div>
 
-    <script>
-        let localStream = null;
+  <script src="app.js"></script>
 
-        function cambiarPantalla(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        // Simulación exacta de pantalla Splash de carga tras Login exitoso
-        function procesarLoginConSplash() {
-            const u = document.getElementById('login-user').value;
-            const p = document.getElementById('login-pass').value;
-            
-            if(u.trim() !== "" && p === "1234") {
-                cambiarPantalla('scr-splash');
-                setTimeout(() => {
-                    cambiarPantalla('scr-menu-principal');
-                }, 2000); // 2 segundos de pantalla de bienvenida con círculos
-            } else {
-                alert('Usuario o contraseña inválidos.');
-            }
-        }
-
-        // CÓDIGO NATIVO PARA CONECTAR LA CÁMARA REAL DEL CELULAR
-        async function encenderCamaraReal() {
-            const video = document.getElementById('webcam-view');
-            const placeholder = document.getElementById('placeholder-ui');
-            const area = document.getElementById('camera-area');
-
-            try {
-                // Solicita acceso explícito a la cámara trasera (environment)
-                localStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" },
-                    audio: false
-                });
-                video.srcObject = localStream;
-                video.style.display = "block";
-                placeholder.style.display = "none";
-
-                // Simular captura automática a los 3 segundos de ver la hoja
-                setTimeout(() => {
-                    document.getElementById('resultado').style.display = "block";
-                }, 3000);
-
-            } catch (err) {
-                console.error("Error de cámara: ", err);
-                // Respaldo por si se abre local desde PC sin HTTPS o sin permisos
-                placeholder.innerHTML = "<span>🧬</span><p style='font-size:12px; color:white; padding:10px;'>Simulando escaneo local por falta de HTTPS seguro...</p>";
-                setTimeout(() => {
-                    document.getElementById('resultado').style.display = "block";
-                    placeholder.innerHTML = "<span style='color:#D4E127; font-weight:bold;'>✔ Escaneo Listo</span>";
-                }, 2000);
-            }
-        }
-
-        function apagarCamara() {
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop());
-            }
-            document.getElementById('webcam-view').style.display = "none";
-            document.getElementById('placeholder-ui').style.display = "flex";
-            document.getElementById('resultado').style.display = "none";
-        }
-    </script>
-</body>
+ </body>
 </html>

@@ -1,0 +1,19 @@
+{
+  "clases": [
+    "cordana",
+    "healthy",
+    "pestalotiopsis",
+    "sigatoka"
+  ],
+  "indices": {
+    "cordana": 0,
+    "healthy": 1,
+    "pestalotiopsis": 2,
+    "sigatoka": 3
+  },
+  "num_clases": 4,
+  "tam_imagen": [
+    224,
+    224
+  ]
+}
